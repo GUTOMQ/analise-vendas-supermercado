@@ -10,7 +10,7 @@
 -- ============================================================
 
 SELECT *
-FROM raw_vendas
+FROM raw.vendas
 LIMIT 10;
 
 
@@ -20,7 +20,7 @@ LIMIT 10;
 
 SELECT
     COUNT(*) AS total_registros
-FROM raw_vendas;
+FROM raw.vendas;
 
 
 -- ============================================================
@@ -28,8 +28,8 @@ FROM raw_vendas;
 -- ============================================================
 
 SELECT
-    COUNT(id_venda) AS total_vendas
-FROM raw_vendas;
+    COUNT("Invoice ID") AS total_vendas
+FROM raw.vendas;
 
 
 -- ============================================================
@@ -37,8 +37,8 @@ FROM raw_vendas;
 -- ============================================================
 
 SELECT *
-FROM raw_vendas
-WHERE filial = 'A';
+FROM raw.vendas
+WHERE "Branch" = 'Alex';
 
 
 -- ============================================================
@@ -46,8 +46,8 @@ WHERE filial = 'A';
 -- ============================================================
 
 SELECT *
-FROM raw_vendas
-WHERE tipo_cliente = 'Member';
+FROM raw.vendas
+WHERE "Customer type" = 'Member';
 
 
 -- ============================================================
@@ -55,8 +55,8 @@ WHERE tipo_cliente = 'Member';
 -- ============================================================
 
 SELECT
-    SUM(valor_total::NUMERIC) AS faturamento_total
-FROM raw_vendas;
+    SUM("Sales"::NUMERIC) AS faturamento_total
+FROM raw.vendas;
 
 
 -- ============================================================
@@ -64,8 +64,8 @@ FROM raw_vendas;
 -- ============================================================
 
 SELECT
-    AVG(valor_total::NUMERIC) AS ticket_medio
-FROM raw_vendas;
+    AVG("Sales"::NUMERIC) AS ticket_medio
+FROM raw.vendas;
 
 
 -- ============================================================
@@ -73,8 +73,8 @@ FROM raw_vendas;
 -- ============================================================
 
 SELECT
-    SUM(quantidade::INTEGER) AS total_itens
-FROM raw_vendas;
+    SUM("Quantity"::INTEGER) AS total_itens
+FROM raw.vendas;
 
 
 -- ============================================================
@@ -82,11 +82,11 @@ FROM raw_vendas;
 -- ============================================================
 
 SELECT
-    filial,
+    "Branch" AS filial,
     COUNT(*) AS quantidade_vendas,
-    SUM(valor_total::NUMERIC) AS faturamento
-FROM raw_vendas
-GROUP BY filial
+    SUM("Sales"::NUMERIC) AS faturamento
+FROM raw.vendas
+GROUP BY "Branch"
 ORDER BY faturamento DESC;
 
 
@@ -95,10 +95,10 @@ ORDER BY faturamento DESC;
 -- ============================================================
 
 SELECT
-    filial,
-    AVG(valor_total::NUMERIC) AS ticket_medio
-FROM raw_vendas
-GROUP BY filial
+    "Branch" AS filial,
+    AVG("Sales"::NUMERIC) AS ticket_medio
+FROM raw.vendas
+GROUP BY "Branch"
 ORDER BY ticket_medio DESC;
 
 
@@ -107,10 +107,10 @@ ORDER BY ticket_medio DESC;
 -- ============================================================
 
 SELECT
-    cidade,
-    SUM(valor_total::NUMERIC) AS faturamento
-FROM raw_vendas
-GROUP BY cidade
+    "City" AS cidade,
+    SUM("Sales"::NUMERIC) AS faturamento
+FROM raw.vendas
+GROUP BY "City"
 ORDER BY faturamento DESC;
 
 
@@ -119,10 +119,10 @@ ORDER BY faturamento DESC;
 -- ============================================================
 
 SELECT
-    linha_produto,
-    SUM(valor_total::NUMERIC) AS faturamento
-FROM raw_vendas
-GROUP BY linha_produto
+    "Product line" AS linha_produto,
+    SUM("Sales"::NUMERIC) AS faturamento
+FROM raw.vendas
+GROUP BY "Product line"
 ORDER BY faturamento DESC;
 
 
@@ -131,10 +131,10 @@ ORDER BY faturamento DESC;
 -- ============================================================
 
 SELECT
-    linha_produto,
+    "Product line" AS linha_produto,
     COUNT(*) AS quantidade_vendas
-FROM raw_vendas
-GROUP BY linha_produto
+FROM raw.vendas
+GROUP BY "Product line"
 ORDER BY quantidade_vendas DESC;
 
 
@@ -143,10 +143,10 @@ ORDER BY quantidade_vendas DESC;
 -- ============================================================
 
 SELECT
-    linha_produto,
-    SUM(quantidade::INTEGER) AS quantidade_itens
-FROM raw_vendas
-GROUP BY linha_produto
+    "Product line" AS linha_produto,
+    SUM("Quantity"::INTEGER) AS quantidade_itens
+FROM raw.vendas
+GROUP BY "Product line"
 ORDER BY quantidade_itens DESC;
 
 
@@ -155,10 +155,10 @@ ORDER BY quantidade_itens DESC;
 -- ============================================================
 
 SELECT
-    forma_pagamento,
+    "Payment" AS forma_pagamento,
     COUNT(*) AS quantidade_vendas
-FROM raw_vendas
-GROUP BY forma_pagamento
+FROM raw.vendas
+GROUP BY "Payment"
 ORDER BY quantidade_vendas DESC;
 
 
@@ -167,10 +167,10 @@ ORDER BY quantidade_vendas DESC;
 -- ============================================================
 
 SELECT
-    forma_pagamento,
-    SUM(valor_total::NUMERIC) AS faturamento
-FROM raw_vendas
-GROUP BY forma_pagamento
+    "Payment" AS forma_pagamento,
+    SUM("Sales"::NUMERIC) AS faturamento
+FROM raw.vendas
+GROUP BY "Payment"
 ORDER BY faturamento DESC;
 
 
@@ -179,8 +179,8 @@ ORDER BY faturamento DESC;
 -- ============================================================
 
 SELECT
-    AVG(avaliacao::NUMERIC) AS avaliacao_media
-FROM raw_vendas;
+    AVG("Rating"::NUMERIC) AS avaliacao_media
+FROM raw.vendas;
 
 
 -- ============================================================
@@ -188,10 +188,10 @@ FROM raw_vendas;
 -- ============================================================
 
 SELECT
-    filial,
-    AVG(avaliacao::NUMERIC) AS avaliacao_media
-FROM raw_vendas
-GROUP BY filial
+    "Branch" AS filial,
+    AVG("Rating"::NUMERIC) AS avaliacao_media
+FROM raw.vendas
+GROUP BY "Branch"
 ORDER BY avaliacao_media DESC;
 
 
@@ -200,11 +200,11 @@ ORDER BY avaliacao_media DESC;
 -- ============================================================
 
 SELECT
-    tipo_cliente,
+    "Customer type" AS tipo_cliente,
     COUNT(*) AS quantidade_vendas,
-    SUM(valor_total::NUMERIC) AS faturamento
-FROM raw_vendas
-GROUP BY tipo_cliente
+    SUM("Sales"::NUMERIC) AS faturamento
+FROM raw.vendas
+GROUP BY "Customer type"
 ORDER BY faturamento DESC;
 
 
@@ -213,11 +213,11 @@ ORDER BY faturamento DESC;
 -- ============================================================
 
 SELECT
-    genero,
+    "Gender" AS genero,
     COUNT(*) AS quantidade_vendas,
-    SUM(valor_total::NUMERIC) AS faturamento
-FROM raw_vendas
-GROUP BY genero
+    SUM("Sales"::NUMERIC) AS faturamento
+FROM raw.vendas
+GROUP BY "Gender"
 ORDER BY faturamento DESC;
 
 
@@ -226,10 +226,10 @@ ORDER BY faturamento DESC;
 -- ============================================================
 
 SELECT
-    linha_produto,
-    AVG(preco_unitario::NUMERIC) AS preco_medio
-FROM raw_vendas
-GROUP BY linha_produto
+    "Product line" AS linha_produto,
+    AVG("Unit price"::NUMERIC) AS preco_medio
+FROM raw.vendas
+GROUP BY "Product line"
 ORDER BY preco_medio DESC;
 
 
@@ -238,10 +238,10 @@ ORDER BY preco_medio DESC;
 -- ============================================================
 
 SELECT
-    linha_produto,
-    SUM(receita_bruta::NUMERIC) AS receita_bruta
-FROM raw_vendas
-GROUP BY linha_produto
+    "Product line" AS linha_produto,
+    SUM("gross income"::NUMERIC) AS receita_bruta
+FROM raw.vendas
+GROUP BY "Product line"
 ORDER BY receita_bruta DESC;
 
 
@@ -250,10 +250,10 @@ ORDER BY receita_bruta DESC;
 -- ============================================================
 
 SELECT
-    linha_produto,
-    SUM(custo_mercadoria::NUMERIC) AS custo_mercadoria
-FROM raw_vendas
-GROUP BY linha_produto
+    "Product line" AS linha_produto,
+    SUM("cogs"::NUMERIC) AS custo_mercadoria
+FROM raw.vendas
+GROUP BY "Product line"
 ORDER BY custo_mercadoria DESC;
 
 
@@ -262,16 +262,16 @@ ORDER BY custo_mercadoria DESC;
 -- ============================================================
 
 SELECT
-    id_venda,
-    filial,
-    linha_produto,
-    valor_total
-FROM raw_vendas
-WHERE valor_total::NUMERIC > (
-    SELECT AVG(valor_total::NUMERIC)
-    FROM raw_vendas
+    "Invoice ID" AS id_venda,
+    "Branch" AS filial,
+    "Product line" AS linha_produto,
+    "Sales"::NUMERIC AS valor_total
+FROM raw.vendas
+WHERE "Sales"::NUMERIC > (
+    SELECT AVG("Sales"::NUMERIC)
+    FROM raw.vendas
 )
-ORDER BY valor_total::NUMERIC DESC;
+ORDER BY "Sales"::NUMERIC DESC;
 
 
 -- ============================================================
@@ -279,13 +279,13 @@ ORDER BY valor_total::NUMERIC DESC;
 -- ============================================================
 
 SELECT
-    id_venda,
-    filial,
-    cidade,
-    linha_produto,
-    valor_total
-FROM raw_vendas
-ORDER BY valor_total::NUMERIC DESC
+    "Invoice ID" AS id_venda,
+    "Branch" AS filial,
+    "City" AS cidade,
+    "Product line" AS linha_produto,
+    "Sales"::NUMERIC AS valor_total
+FROM raw.vendas
+ORDER BY "Sales"::NUMERIC DESC
 LIMIT 10;
 
 
@@ -294,13 +294,13 @@ LIMIT 10;
 -- ============================================================
 
 SELECT
-    id_venda,
-    filial,
-    cidade,
-    linha_produto,
-    valor_total
-FROM raw_vendas
-ORDER BY valor_total::NUMERIC
+    "Invoice ID" AS id_venda,
+    "Branch" AS filial,
+    "City" AS cidade,
+    "Product line" AS linha_produto,
+    "Sales"::NUMERIC AS valor_total
+FROM raw.vendas
+ORDER BY "Sales"::NUMERIC
 LIMIT 10;
 
 
@@ -309,8 +309,8 @@ LIMIT 10;
 -- ============================================================
 
 SELECT
-    AVG(imposto::NUMERIC) AS imposto_medio
-FROM raw_vendas;
+    AVG("Tax 5%"::NUMERIC) AS imposto_medio
+FROM raw.vendas;
 
 
 -- ============================================================
@@ -318,8 +318,8 @@ FROM raw_vendas;
 -- ============================================================
 
 SELECT
-    SUM(imposto::NUMERIC) AS imposto_total
-FROM raw_vendas;
+    SUM("Tax 5%"::NUMERIC) AS imposto_total
+FROM raw.vendas;
 
 
 -- ============================================================
@@ -327,10 +327,10 @@ FROM raw_vendas;
 -- ============================================================
 
 SELECT
-    id_venda,
+    "Invoice ID" AS id_venda,
     COUNT(*) AS quantidade
-FROM raw_vendas
-GROUP BY id_venda
+FROM raw.vendas
+GROUP BY "Invoice ID"
 HAVING COUNT(*) > 1;
 
 
@@ -339,12 +339,12 @@ HAVING COUNT(*) > 1;
 -- ============================================================
 
 SELECT *
-FROM raw_vendas
-WHERE preco_unitario::NUMERIC < 0
-   OR quantidade::INTEGER <= 0
-   OR imposto::NUMERIC < 0
-   OR valor_total::NUMERIC < 0
-   OR custo_mercadoria::NUMERIC < 0
-   OR receita_bruta::NUMERIC < 0
-   OR avaliacao::NUMERIC < 0
-   OR avaliacao::NUMERIC > 10;
+FROM raw.vendas
+WHERE "Unit price"::NUMERIC < 0
+   OR "Quantity"::INTEGER <= 0
+   OR "Tax 5%"::NUMERIC < 0
+   OR "Sales"::NUMERIC < 0
+   OR "cogs"::NUMERIC < 0
+   OR "gross income"::NUMERIC < 0
+   OR "Rating"::NUMERIC < 0
+   OR "Rating"::NUMERIC > 10;

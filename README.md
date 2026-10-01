@@ -1,32 +1,52 @@
-PROJETO desenvolvido para demonstração de conhecimentos em Python, SQL, PostgreSQL, ETL e análise de dados.
-
 📊 Análise de Vendas de Supermercado
 
-Projeto de análise de dados desenvolvido para demonstrar um fluxo completo de ETL, tratamento de dados, PostgreSQL, análise estatística e geração de indicadores de negócio com Python.
+Projeto desenvolvido para demonstrar conhecimentos em Python, Pandas, SQL, PostgreSQL, ETL, estatística descritiva, visualização de dados e controle de versão com Git e GitHub.
 
-O projeto utiliza uma base de 1.000 registros de vendas e organiza os dados em diferentes camadas, desde a ingestão dos dados brutos até a geração de indicadores e visualizações.
+O projeto implementa um fluxo completo de análise de dados de vendas, desde a ingestão dos dados brutos até a geração de indicadores de negócio e visualizações.
+
+A base utilizada possui 1.000 registros de vendas.
 
 🎯 Objetivo
 
-O objetivo do projeto é construir um pipeline de dados capaz de:
+Construir um pipeline de dados capaz de:
 
-carregar dados brutos de vendas;
+carregar e preservar os dados brutos na camada Raw;
 
-armazenar os dados na camada Raw;
+armazenar os dados no PostgreSQL;
 
-realizar limpeza e transformação com Python;
+realizar limpeza e transformação utilizando Python e Pandas;
 
-validar regras de negócio;
+converter corretamente os tipos de dados;
 
-armazenar a base tratada no PostgreSQL;
+identificar valores ausentes e duplicidades;
 
-criar uma camada Analytics;
+aplicar regras de validação;
+
+criar colunas derivadas;
+
+armazenar a base tratada;
+
+criar uma camada Analytics com indicadores de negócio;
+
+realizar análise estatística descritiva;
 
 responder perguntas de negócio;
 
-gerar estatísticas descritivas;
+gerar visualizações para facilitar a interpretação dos resultados.
 
-criar gráficos para análise dos resultados.
+📚 Fonte dos dados
+
+Os dados utilizados são provenientes do dataset público Supermarket Sales, disponibilizado no Kaggle:
+
+Supermarket Sales — Kaggle
+
+https://www.kaggle.com/datasets/faresashraf1001/supermarket-sales
+
+O arquivo original utilizado no projeto é:
+
+data/raw/supermarket_sales.csv
+
+A base possui 1.000 registros e 17 colunas originais.
 
 🛠️ Tecnologias utilizadas
 
@@ -50,43 +70,81 @@ python-dotenv
 
 pgAdmin
 
-VS Code
+Git
+
+GitHub
 
 🏗️ Arquitetura do projeto
 
-O fluxo de dados foi estruturado da seguinte forma:
+O fluxo foi estruturado seguindo uma abordagem inspirada na Arquitetura Medallion, com separação entre dados brutos, dados tratados e dados analíticos.
 
-CSV
- ↓
-RAW
- ↓
-ETL com Python
- ↓
-TRATADO
- ↓
-ANALYTICS
- ↓
-Análise Estatística
- ↓
-Resultados e Gráficos
+CSV original
+     │
+     ▼
+   RAW
+     │
+     ▼
+Python / Pandas
+     │
+     ▼
+  TRATADO
+     │
+     ├──────────────► data/processed/
+     │
+     ▼
+ ANALYTICS
+     │
+     ▼
+Análise estatística
+     │
+     ▼
+Resultados e gráficos
 
-Camadas
+Camada Raw
 
-Raw
+A camada Raw preserva os dados provenientes do CSV sem aplicar transformações de negócio.
 
-Armazena os dados recebidos da fonte original, preservando os valores sem transformações de negócio.
+Tabela:
 
-Tratado
+raw.vendas
 
-Contém os dados limpos, tipados e validados pelo processo de ETL desenvolvido em Python.
+Os dados são inicialmente armazenados como texto para preservar a informação original.
 
-Analytics
+Camada Staging
 
-Contém tabelas agregadas utilizadas para responder perguntas de negócio e facilitar análises.
+A camada Staging realiza a conversão inicial dos tipos de dados provenientes da Raw.
+
+Schema:
+
+staging
+
+Essa camada permite separar a estrutura original dos dados das etapas posteriores de tratamento.
+
+Camada Tratada
+
+A camada Tratada contém os dados limpos, tipados e validados pelo processo de ETL desenvolvido em Python.
+
+Tabela principal:
+
+tratado.vendas
+
+O processo também gera o arquivo:
+
+data/processed/vendas_tratadas.csv
+
+Camada Analytics
+
+A camada Analytics contém tabelas agregadas utilizadas para responder perguntas de negócio e facilitar consultas analíticas.
+
+Schema:
+
+analytics
 
 📁 Estrutura do projeto
 .
 ├── data/
+│   ├── raw/
+│   │   └── supermarket_sales.csv
 │   └── processed/
 │       └── vendas_tratadas.csv
 │
@@ -99,26 +157,31 @@ Contém tabelas agregadas utilizadas para responder perguntas de negócio e faci
 │   └── avaliacao_por_linha_produto.png
 │
 ├── sql/
-│   ├── 01_*.sql
-│   ├── 02_*.sql
-│   ├── 03_*.sql
+│   ├── 01_criar_banco.sql
+│   ├── 01_schemas.sql
+│   ├── 02_criar_tabelas.sql
+│   ├── 02_staging.sql
+│   ├── 03_consultas.sql
 │   └── 04_analytics.sql
 │
 ├── src/
-│   ├── 01_*.py
+│   ├── 01_leitura_dados.py
 │   ├── 02_etl_vendas.py
-│   └── 03_estatistica.py
+│   ├── 03_estatistica.py
+│   ├── 03_validacao_tratada.py
+│   ├── carga_raw.py
+│   ├── config.py
+│   └── teste_conexao.py
 │
-├── .env
 ├── .gitignore
 ├── README.md
 └── requirements.txt
 
-Os nomes dos arquivos podem variar de acordo com a organização final do projeto.
+O arquivo .env, utilizado para armazenar credenciais de acesso ao banco, é mantido fora do versionamento por questões de segurança.
 
 🔄 Processo de ETL
 
-O processo de ETL é realizado pelo arquivo:
+O processo de ETL principal é realizado pelo arquivo:
 
 src/02_etl_vendas.py
 
@@ -130,31 +193,31 @@ Leitura dos dados da camada Raw.
 
 Padronização dos nomes das colunas.
 
-Limpeza de espaços nos campos de texto.
+Limpeza dos campos de texto.
 
 Conversão das colunas numéricas.
 
-Conversão de data e hora.
+Conversão das colunas de data e hora.
 
-Identificação de valores nulos.
+Identificação de valores ausentes.
 
-Identificação e remoção de duplicidades.
+Identificação de duplicidades.
+
+Tratamento dos valores ausentes.
 
 Aplicação das regras de negócio.
 
 Criação de colunas derivadas.
 
-Arredondamento de valores monetários.
+Validação da base final.
 
-Validação final da base.
+Exportação da base tratada para CSV.
 
-Exportação para CSV.
-
-Carga da base tratada no PostgreSQL.
+Carga dos dados tratados no PostgreSQL.
 
 ✅ Validações realizadas
 
-Durante o processo de ETL foram realizadas as seguintes validações:
+Foram aplicadas as seguintes regras de negócio:
 
 preço unitário maior ou igual a zero;
 
@@ -177,35 +240,68 @@ verificação de duplicidades;
 validação de data e hora.
 
 Resultado do tratamento
-Registros recebidos: 1.000
-Duplicidades encontradas: 0
-Registros removidos por dados críticos: 0
-Registros finais: 1.000
+Indicador	Resultado
+Registros recebidos	1.000
+Duplicidades encontradas	0
+Registros removidos por dados críticos	0
+Registros finais	1.000
+Colunas finais	21
 
-A base tratada possui 21 colunas.
+A base tratada possui 21 colunas, incluindo colunas derivadas para análise temporal e cálculo do ticket médio por item.
 
 🗄️ PostgreSQL
 
-O projeto utiliza PostgreSQL para armazenamento e consulta dos dados.
+O projeto utiliza PostgreSQL como banco de dados principal.
 
 Os principais schemas são:
 
 raw
+staging
 tratado
 analytics
 
-Tabela tratada
+Tabela Raw
+raw.vendas
+
+Armazena os dados originais sem transformação de negócio.
+
+Tabela Tratada
 tratado.vendas
 
-A tabela contém os dados tratados e tipados utilizados como fonte para a camada Analytics.
+Armazena os dados tratados e tipados utilizados nas análises.
 
+A tabela possui chave primária para id_venda e restrições de integridade para validar regras do domínio.
+
+📖 Dicionário de dados — camada Tratada
+Coluna	Tipo	Descrição
+id_venda	VARCHAR/TEXT	Identificador único da venda
+filial	VARCHAR/TEXT	Filial responsável pela venda
+cidade	VARCHAR/TEXT	Cidade da filial
+tipo_cliente	VARCHAR/TEXT	Tipo do cliente
+genero	VARCHAR/TEXT	Gênero informado no registro
+linha_produto	VARCHAR/TEXT	Linha do produto
+preco_unitario	NUMERIC	Preço unitário do produto
+quantidade	INTEGER	Quantidade de produtos vendidos
+imposto	NUMERIC	Imposto da venda
+valor_total	NUMERIC	Valor total da venda
+data_venda	DATE	Data da venda
+hora_venda	TIME	Horário da venda
+forma_pagamento	VARCHAR/TEXT	Forma de pagamento
+custo_mercadoria	NUMERIC	Custo da mercadoria
+margem_percentual	NUMERIC	Percentual de margem
+receita_bruta	NUMERIC	Receita bruta
+avaliacao	NUMERIC	Avaliação atribuída pelo cliente
+dia_semana	VARCHAR/TEXT	Dia da semana da venda
+mes_venda	INTEGER	Mês da venda
+ano_venda	INTEGER	Ano da venda
+ticket_medio_item	NUMERIC	Valor da venda dividido pela quantidade
 📊 Camada Analytics
 
 A camada Analytics é criada pelo arquivo:
 
 sql/04_analytics.sql
 
-São criadas 13 tabelas analíticas:
+São disponibilizadas as seguintes tabelas analíticas:
 
 analytics.kpis_gerais
 analytics.vendas_por_filial
@@ -221,31 +317,83 @@ analytics.indicadores_impostos
 analytics.receita_por_produto
 analytics.maiores_vendas
 
-A camada Analytics utiliza como fonte a tabela:
+A fonte principal dessas análises é:
 
 tratado.vendas
 
 📈 Perguntas de negócio
 
-O projeto responde perguntas como:
+A análise responde às oito perguntas propostas na atividade.
 
-Qual filial apresentou o maior faturamento?
+1. Qual filial apresentou o maior faturamento?
 
-Qual filial realizou a maior quantidade de vendas?
+Giza
 
-Qual linha de produto apresentou o maior faturamento?
+Faturamento:
 
-Qual linha de produto apresentou a melhor avaliação média?
+R$ 110.568,71
 
-Qual foi a forma de pagamento mais utilizada?
+2. Qual filial realizou a maior quantidade de vendas?
 
-Qual foi o valor médio das vendas?
+Alex
 
-Qual foi a maior venda registrada?
+Quantidade:
 
-Em qual dia da semana ocorreu a maior quantidade de vendas?
+340 vendas
 
-📊 Análise estatística
+3. Qual linha de produto apresentou o maior faturamento?
+
+Food and beverages
+
+Faturamento:
+
+R$ 56.144,86
+
+4. Qual linha de produto recebeu a melhor avaliação média?
+
+Food and beverages
+
+Avaliação média:
+
+7,11
+
+5. Qual foi a forma de pagamento mais utilizada?
+
+Ewallet
+
+Quantidade:
+
+345 vendas
+
+6. Qual foi o valor médio das vendas?
+   R$ 322,97
+7. Qual foi a maior venda registrada?
+
+ID da venda:
+
+860-79-0874
+
+Valor:
+
+R$ 1.042,65
+
+Filial:
+
+Giza
+
+Linha de produto:
+
+Fashion accessories
+
+8. Em qual dia da semana ocorreu a maior quantidade de vendas?
+
+Sábado
+
+Quantidade:
+
+164 vendas
+
+📊 Estatística descritiva
 
 A análise estatística é realizada pelo arquivo:
 
@@ -267,38 +415,15 @@ receita bruta;
 
 avaliação.
 
-Também foram gerados gráficos para facilitar a interpretação dos resultados.
+Entre os principais indicadores:
 
-📌 Principais resultados
-
-A análise realizada sobre os 1.000 registros apresentou os seguintes resultados:
-
-Faturamento
-
-Faturamento total da base tratada:
-
-R$ 322.966,82
-
-Quantidade de vendas
-1.000 vendas
-
-Unidades vendidas
-5.510 unidades
-
-Ticket médio
-R$ 322,97
-
-Maior venda
-R$ 1.042,65
-
-Forma de pagamento mais utilizada
-Ewallet
-345 vendas
-
-Dia da semana com maior quantidade de vendas
-sábado
-164 vendas
-
+Indicador	Resultado
+Quantidade de vendas	1.000
+Unidades vendidas	5.510
+Faturamento total	R$ 322.966,82
+Valor médio das vendas	R$ 322,97
+Maior venda	R$ 1.042,65
+Avaliação média	6,97
 📉 Visualizações
 
 O projeto gera os seguintes gráficos:
@@ -313,9 +438,13 @@ vendas por dia da semana;
 
 avaliação média por linha de produto.
 
-Os arquivos são armazenados na pasta:
+Os arquivos são armazenados em:
 
 resultados/
+
+Também é gerado o arquivo:
+
+resultados/estatisticas_descritivas.csv
 
 ▶️ Como executar o projeto
 
@@ -339,9 +468,7 @@ Crie um arquivo:
 
 .env
 
-com as configurações do PostgreSQL.
-
-Exemplo:
+com as configurações do PostgreSQL:
 
 DB_HOST=localhost
 DB_PORT=5432
@@ -351,70 +478,132 @@ DB_PASSWORD=sua_senha
 
 O arquivo .env não deve ser enviado para o GitHub.
 
-4. Executar a estrutura SQL
+4. Criar o banco de dados
 
-Os scripts da pasta sql/ devem ser executados na ordem definida pelo projeto.
+Execute o script:
 
-A execução pode ser realizada utilizando o PostgreSQL/pgAdmin.
+sql/01_criar_banco.sql
 
-5. Executar o ETL
+O banco utilizado pelo projeto é:
+
+supermercado_vendas
+
+5. Criar os schemas
 
 Execute:
 
-python src/02_etl_vendas.py
+sql/01_schemas.sql
 
-O processo irá gerar a base tratada:
+6. Criar a tabela Raw
+
+Execute:
+
+sql/02_criar_tabelas.sql
+
+7. Criar a camada Staging
+
+Execute:
+
+sql/02_staging.sql
+
+8. Carregar os dados Raw
+
+Utilize o script:
+
+src/carga_raw.py
+
+ou realize a importação utilizando o PostgreSQL/pgAdmin.
+
+O arquivo original está em:
+
+data/raw/supermarket_sales.csv
+
+9. Executar as consultas SQL
+
+O arquivo:
+
+sql/03_consultas.sql
+
+contém consultas de exploração, agregação, filtros, validações e indicadores.
+
+10. Executar o processo de ETL
+    python src/02_etl_vendas.py
+
+O processo gera:
 
 data/processed/vendas_tratadas.csv
 
-e carregar os dados na tabela:
+e carrega os dados na tabela:
 
 tratado.vendas
 
-6. Criar a camada Analytics
+11. Criar a camada Analytics
 
-Execute:
+Execute o conteúdo de:
 
 sql/04_analytics.sql
 
-A camada Analytics será criada no PostgreSQL.
+no PostgreSQL/pgAdmin.
 
-7. Executar a análise estatística
+12. Executar a análise estatística
+    python src/03_estatistica.py
 
-Execute:
-
-python src/03_estatistica.py
-
-Os resultados serão armazenados na pasta:
+Os resultados serão armazenados em:
 
 resultados/
 
 🔐 Segurança
 
-Informações sensíveis de conexão são armazenadas em variáveis de ambiente.
+As credenciais de acesso ao PostgreSQL são armazenadas em variáveis de ambiente.
 
-O arquivo .env está incluído no .gitignore e não deve ser versionado.
+O arquivo:
 
-📚 Objetivo do projeto
+.env
 
-Este projeto foi desenvolvido como prática de:
+está incluído no .gitignore e não deve ser versionado.
 
-Engenharia de Dados;
+Nenhuma senha de acesso ao banco deve ser publicada no GitHub.
 
-ETL;
+📌 Principais conhecimentos demonstrados
+
+Este projeto demonstra conhecimentos em:
+
+Python;
+
+Pandas;
+
+NumPy;
 
 SQL;
 
 PostgreSQL;
 
-análise exploratória de dados;
+modelagem de dados;
+
+constraints;
+
+ETL;
+
+tratamento de dados;
+
+validação de dados;
 
 estatística descritiva;
 
+análise exploratória;
+
 visualização de dados;
 
-organização de projetos Python;
+criação de indicadores;
 
-criação de indicadores de negócio.
+organização de projetos;
 
-👤 Gustavo Machado Queiroga
+Git;
+
+GitHub.
+
+👤 Autor:
+
+Gustavo Machado Queiroga
+
+Projeto desenvolvido como atividade avaliativa do curso de Análise de Dados com Python — Módulo 1.

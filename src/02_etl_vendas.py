@@ -11,7 +11,7 @@ import os
 
 import pandas as pd
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 
 
 # ============================================================
@@ -415,13 +415,17 @@ df.to_csv(
 # CARGA DA CAMADA TRATADA NO POSTGRESQL
 # ============================================================
 
+with engine.begin() as conn:
+    conn.execute(text("TRUNCATE TABLE tratado.vendas"))
+
 df.to_sql(
     "vendas",
     engine,
     schema="tratado",
-    if_exists="replace",
+    if_exists="append",
     index=False,
 )
+
 
 print("\nDados carregados na tabela tratado.vendas:")
 print(f"Registros carregados: {len(df)}")
